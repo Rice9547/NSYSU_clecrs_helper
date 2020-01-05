@@ -82,7 +82,7 @@ const takeClassPrePage = async function (page, need, doSomething = () => {}) {
                 // for(let j=3; j<=24; j++) {
                 //     console.log(row.eq(j).find('small').text());
                 // }
-                doSomething(row);
+                doSomething(row, `${Object.keys(need)[0]}-${need[Object.keys(need)[0]]}`);
                 //console.log(row.eq(7).find('small').text());
             }
             resolve(body);
@@ -91,6 +91,7 @@ const takeClassPrePage = async function (page, need, doSomething = () => {}) {
 };
 
 function lock(row) {
+    row['type'] = '必修';
     courses.push(row);
     for(let i=17; i<=23; i++) {
         let text = row.eq(i).find('small').text().trim(' ');
@@ -142,7 +143,8 @@ function checkTime(row) {
     return true;
 }
 
-async function processCourse(row) {
+async function processCourse(row, type) {
+    row['type'] = type;
     return new Promise((resolve, reject) => {
         let T3 = row.eq(4).find('small').text().trim(' '), crsname = row.eq(7).find('small').text().trim(' ');
         for (let i of config.filter.T3) {
@@ -152,7 +154,7 @@ async function processCourse(row) {
             }
         }
         for (let i of config.filter.crsname) {
-            if (crsname == i) {
+            if (crsname.search(i) != -1) {
                 resolve();
                 return;
             }
@@ -192,7 +194,10 @@ async function startSpider() {
 
 function processIndexToData(index) {
     let row = courses[index];
-    return `${row.eq(3).find('small').text().trim()}-${row.eq(7).find('small').text().trim(' ')}(${row.eq(4).find('small').text().trim(' ')})-${row.eq(15).find('small').text().trim(' ')}`;
+    return {
+        type: row['type'],
+        value: `${row.eq(3).find('small').text().trim()}-${row.eq(7).find('small').text().trim(' ')}(${row.eq(4).find('small').text().trim(' ')})-${row.eq(15).find('small').text().trim(' ')}`
+    };
 }
 
 async function main() {
@@ -201,11 +206,17 @@ async function main() {
     let data = time_table.map((day) => {
         for (let i in day) {
             if (typeof(day[i]) == "number") {
-                day[i] = processIndexToData(day[i]);
+                let result = processIndexToData(day[i]);
+                day[i] = {};
+                day[i][result['type']] = [result['value']];
             } else {
                 day[i] = day[i].map((time) => {
                     return processIndexToData(time);
-                });
+                }).reduce((result, current) => {
+                    if (result[current['type']]) result[current['type']].push(current['value']);
+                    else result[current['type']] = [current['value']];
+                    return result;
+                }, {});
             }
         }
         return day;
