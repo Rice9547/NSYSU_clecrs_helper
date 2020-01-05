@@ -26,7 +26,7 @@ for(let i=0; i<7; i++) {
 
 let courses = [];
 
-const takeClassPrePage = async function (page, need, doSomething = () => {}) {
+const takeClassPrePage = async function (page, need, doSomething = () => {}, type) {
     return new Promise((resolve, reject) => {
         let url = "http://selcrs.nsysu.edu.tw/menu1/dplycourse.asp";
         let params = {
@@ -82,7 +82,7 @@ const takeClassPrePage = async function (page, need, doSomething = () => {}) {
                 // for(let j=3; j<=24; j++) {
                 //     console.log(row.eq(j).find('small').text());
                 // }
-                doSomething(row, `${Object.keys(need)[0]}-${need[Object.keys(need)[0]]}`);
+                doSomething(row, type);
                 //console.log(row.eq(7).find('small').text());
             }
             resolve(body);
@@ -114,12 +114,12 @@ async function getLock() {
     });
 }
 
-async function takeClassInfo(data) {
+async function takeClassInfo(data, type) {
     console.log(data);
     return new Promise(async(resolve, reject) => {
         isEnd = false;
         for (let i = 1; !isEnd; i++) {
-            await takeClassPrePage(i, data, processCourse);
+            await takeClassPrePage(i, data, processCourse, type);
             console.log(`take page ${i} finished!`);
             if (i % 10 == 0) {
                 await setTimeout(() => { }, 5 * 1000);
@@ -180,13 +180,13 @@ async function startSpider() {
     return new Promise(async(resolve, reject) => {
         for (let i of config.form.D1) {
             await takeClassInfo({
-                "D1": i
-            });
+                "D1": i.data
+            }, i.text);
         }
         for (let i of config.form.crsname) {
             await takeClassInfo({
-                "crsname": i
-            });
+                "crsname": i.data
+            }, i.text);
         }
         resolve();
     });
