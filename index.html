@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>課表</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="result.js"></script>
+    <script>
+        let times = [
+            {
+                'text': 'A',
+                'time': '07:00-07:50'
+            },
+            {
+                'text': '1',
+                'time': '08:10-09:00'
+            },
+            {
+                'text': '2',
+                'time': '09:10-10:00'
+            },
+            {
+                'text': '3',
+                'time': '10:10-11:00'
+            },
+            {
+                'text': '4',
+                'time': '11:10-12:00'
+            },
+            {
+                'text': 'B',
+                'time': '12:10-13:00'
+            },
+            {
+                'text': '5',
+                'time': '13:10-14:00'
+            },
+            {
+                'text': '6',
+                'time': '14:10-15:00'
+            },
+            {
+                'text': '7',
+                'time': '15:10-16:00'
+            },
+            {
+                'text': '8',
+                'time': '16:10-17:00'
+            },
+            {
+                'text': '9',
+                'time': '17:10-18:00'
+            },
+            {
+                'text': 'C',
+                'time': '18:20-19:10'
+            },
+            {
+                'text': 'D',
+                'time': '19:15-20:05'
+            },
+            {
+                'text': 'E',
+                'time': '20:10-21:00'
+            },
+            {
+                'text': 'F',
+                'time': '21:05-21:55'
+            }
+        ];
+        function getPosition(day, cnt) {
+            const trans = "A1234B56789CDEFG".search(cnt);
+            return trans * 9 + 2 + day;
+        }
+        window.onload = () => {
+            let time_table = document.getElementById('time_table');
+            let tbody = time_table.children[1];
+            for (let i of times) {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td>${i.text}</td><td>${i.time}</td>`;
+                for (let j = 0; j < 7; j++) {
+                    tr.appendChild(document.createElement('td'));
+                }
+                tbody.appendChild(tr);
+            }
+            let tds = document.getElementsByTagName('td');
+            for (let i = 0; i < course.length; i++) {
+                let day = course[i];
+                for (let time in day) {
+                    if (typeof (day[time]) != "string" && day[time].length == 0) {
+                        continue;
+                    }
+                    let button = document.createElement('button');
+                    button.setAttribute('class', 'btn btn-primary');
+                    button.setAttribute('data-toggle', 'modal');
+                    button.setAttribute('data-target', `#course${getPosition(i, time)}`);
+                    let modal = `
+                        <div class="modal fade" id="course${getPosition(i, time)}" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <span style='color: black'>
+                                        ${typeof (day[time]) == "string" ? day[time] : day[time].join('<br>')}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    button.innerHTML = typeof (day[time]) == "string" ? "(1)" : `(${day[time].length})`;
+                    tds[getPosition(i, time)].innerHTML = modal;
+                    tds[getPosition(i, time)].appendChild(button);
+                }
+            }
+        }
+    </script>
+    <style>
+        .table {
+            margin: 0;
+        }
+
+        .table tbody tr td {
+            vertical-align: middle;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="time_table" class="table table-bordered table-dark">
+        <thead align="center">
+            <tr>
+                <th></th>
+                <th></th>
+                <th scope="col">Monday</th>
+                <th scope="col">Tuesday</th>
+                <th scope="col">Wednesday</th>
+                <th scope="col">Thursday</th>
+                <th scope="col">Friday</th>
+                <th scope="col">Saturday</th>
+                <th scope="col">Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</body>
+
+</html>
