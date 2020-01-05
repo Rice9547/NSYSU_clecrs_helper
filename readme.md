@@ -1,7 +1,7 @@
 # 課表預覽
 
 ## 成果
-![]("demo.png")
+![demo]("https://i.imgur.com/hjImsQB.png")
 
 ## 架構
 ### 設定
