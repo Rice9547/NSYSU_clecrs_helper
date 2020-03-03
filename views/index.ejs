@@ -78,6 +78,17 @@
             const trans = "A1234B56789CDEFG".search(cnt);
             return trans * 8 + 2 + day;
         }
+        function switchButton(button) {
+            let type = button.innerHTML;
+            let ele = document.getElementsByClassName(type);
+            for (let dom of ele) {
+                if (dom.classList.contains('hide')) {
+                    dom.classList.remove('hide');
+                } else {
+                    dom.classList.add('hide');
+                }
+            }
+        }
         window.onload = () => {
             let time_table = document.getElementById('time_table');
             let tbody = time_table.children[1];
@@ -99,6 +110,7 @@
                             colors[k] = Object.keys(colors).length % styles.length;
                         }
                         let div = document.createElement('div');
+                        div.setAttribute('class', k);
                         let button = document.createElement('button');
                         button.setAttribute('class', `btn btn-${styles[colors[k]]}`);
                         button.setAttribute('data-toggle', 'modal');
@@ -125,10 +137,11 @@
             }
             let showColors = document.getElementById('colors');
             for (let i in colors) {
-                let span = document.createElement('span');
-                span.setAttribute('class', `btn btn-${styles[colors[i]]}`);
-                span.innerHTML = i;
-                showColors.appendChild(span);
+                let button = document.createElement('button');
+                button.setAttribute('onclick', 'switchButton(this)');
+                button.setAttribute('class', `btn btn-${styles[colors[i]]}`);
+                button.innerHTML = i;
+                showColors.appendChild(button);
             }
         }
     </script>
@@ -144,27 +157,33 @@
         td {
             text-align: center;
         }
+
+        .hide {
+            display: none;
+        }
     </style>
 </head>
 
-<body>
-    <div id="colors" class="bg-dark text-center"></div>
-    <table id="time_table" class="table table-bordered table-dark">
-        <thead align="center">
-            <tr>
-                <th></th>
-                <th></th>
-                <th scope="col">Monday</th>
-                <th scope="col">Tuesday</th>
-                <th scope="col">Wednesday</th>
-                <th scope="col">Thursday</th>
-                <th scope="col">Friday</th>
-                <th scope="col">Saturday</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<body class="bg-dark">
+    <div class="container-fluid text-center">
+        <div id="colors"></div>
+        <table id="time_table" class="table table-bordered table-dark">
+            <thead align="center">
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th scope="col">Monday</th>
+                    <th scope="col">Tuesday</th>
+                    <th scope="col">Wednesday</th>
+                    <th scope="col">Thursday</th>
+                    <th scope="col">Friday</th>
+                    <th scope="col">Saturday</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </body>
 
 </html>
